@@ -2,16 +2,18 @@ import java.util.Arrays;
 import java.util.Scanner;
 public class Game {
     public static void main(String[] args) {
-        int keepGoing = 1;
+        boolean keepGoing = true;
         String[] usedWords;
         usedWords = new String [831];
-        while(keepGoing == 1) {
+        while(keepGoing) {
             Scanner inputDevice = new Scanner(System.in);
             System.out.println("Select difficulty");
-            System.out.println("Easy:   1\nMedium: 2\nHard:   3");
+            System.out.println("Easy:   1\nMedium: 2\nHard:   3\nEXIT:   4");
             System.out.print(">> ");
             int difficulty = inputDevice.nextInt();
-
+            if(difficulty == 4){
+                break;
+            }
             //Check word
             int wordCheck = 0;
             Word word = new Word(difficulty);
@@ -30,15 +32,17 @@ public class Game {
             }
 
             //Print word length
+            int wrongGuess = 0;
+            HangmanDisplay hangman = new HangmanDisplay(wrongGuess);
             char[] letters = word.getWord().toCharArray();
             char[] hints = new char[letters.length];
             Arrays.fill(hints, '_');
             System.out.println(hints);
 
             //Check guess
-            int wrongGuess = 0;
             int remainingLetters = letters.length;
             char[] updatedHints = new char[letters.length];
+            Arrays.fill(updatedHints, '_');
             while (wrongGuess != 6) {
                 System.out.println("Enter guess");
                 System.out.print(">> ");
@@ -54,15 +58,27 @@ public class Game {
                         updatedHints[i] = guess.charAt(0);
                     }
                 }
-                if(hints == updatedHints){
+                boolean letterWrong;
+                letterWrong = Arrays.equals(hints, updatedHints);
+
+                if(letterWrong){
                     wrongGuess += 1;
                 } else{
-                    hints = updatedHints;
+                    for(int i = 0; i < letters.length; ++i){
+                        hints[i] = updatedHints[i];
+                    }
                 }
+                new HangmanDisplay(wrongGuess);
                 System.out.println(hints);
                 if(remainingLetters == 0){
                     break;
                 }
+            }
+            System.out.println("\nThe word was: " + word.getWord());
+            if(wrongGuess == 6){
+                System.out.println("You Lose\n");
+            } else{
+                System.out.println("Winner!\n");
             }
         }
     }

@@ -55,9 +55,15 @@ public class Word {
 
     public Word(int difficulty) {
         switch (difficulty) {
-            case 1 -> setWordEasy(getWords());
-            case 2 -> setWordMedium(getWords());
-            case 3 -> setWordHard(getWords());
+            case 1:
+                setWordEasy(getWords());
+                break;
+            case 2:
+                setWordMedium(getWords());
+                break;
+            case 3:
+                setWordHard(getWords());
+                break;
         }
     }
 }
