@@ -1,31 +1,37 @@
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Scanner;
+
+
 public class Game {
     public static void main(String[] args) {
+        playMusic("bgMusic.wav");
         boolean keepGoing = true;
         String[] usedWords;
-        usedWords = new String [831];
-        while(keepGoing) {
+        usedWords = new String[831];
+        while (keepGoing) {
             Scanner inputDevice = new Scanner(System.in);
             System.out.println("Select difficulty");
             System.out.println("Easy:   1\nMedium: 2\nHard:   3\nEXIT:   4");
             System.out.print(">> ");
             int difficulty = inputDevice.nextInt();
-            if(difficulty == 4){
+            if (difficulty == 4) {
                 break;
             }
             //Check word
             int wordCheck = 0;
             Word word = new Word(difficulty);
-            while(wordCheck == 0){
+            while (wordCheck == 0) {
 
-                for(int i = 0; i < usedWords.length; ++i){
-                    if(word.getWord().equals(usedWords[i])){
+                for (int i = 0; i < usedWords.length; ++i) {
+                    if (word.getWord().equals(usedWords[i])) {
                         usedWords[i] = word.getWord();
                         word = new Word(difficulty);
                         break;
 
-                    }else if (i == usedWords.length - 1){
+                    } else if (i == usedWords.length - 1) {
                         wordCheck = 1;
                     }
                 }
@@ -52,8 +58,8 @@ public class Game {
                     System.out.print(">> ");
                     guess = inputDevice.next();
                 }
-                for(int i = 0; i < letters.length; ++i){
-                    if(letters[i] == guess.charAt(0)) {
+                for (int i = 0; i < letters.length; ++i) {
+                    if (letters[i] == guess.charAt(0)) {
                         remainingLetters -= 1;
                         updatedHints[i] = guess.charAt(0);
                     }
@@ -61,25 +67,36 @@ public class Game {
                 boolean letterWrong;
                 letterWrong = Arrays.equals(hints, updatedHints);
 
-                if(letterWrong){
+                if (letterWrong) {
                     wrongGuess += 1;
-                } else{
-                    for(int i = 0; i < letters.length; ++i){
-                        hints[i] = updatedHints[i];
-                    }
+                } else {
+                    System.arraycopy(updatedHints, 0, hints, 0, letters.length);
                 }
                 new HangmanDisplay(wrongGuess);
                 System.out.println(hints);
-                if(remainingLetters == 0){
+                if (remainingLetters == 0) {
                     break;
                 }
             }
             System.out.println("\nThe word was: " + word.getWord());
-            if(wrongGuess == 6){
+            if (wrongGuess == 6) {
                 System.out.println("You Lose\n");
-            } else{
+            } else {
                 System.out.println("Winner!\n");
             }
+        }
+    }
+
+    public static void playMusic(String musicFile) {
+        Clip clip;
+
+        try {
+            AudioInputStream input = AudioSystem.getAudioInputStream(new File(musicFile));
+            clip = AudioSystem.getClip();
+            clip.open(input);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
         }
     }
 }
